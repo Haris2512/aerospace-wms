@@ -4,8 +4,10 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+
 
 class User extends Authenticatable
 {
@@ -21,6 +23,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
+        'status',
     ];
 
     /**
@@ -45,4 +49,25 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+    public function hasrole(string $role): bool
+    {
+        return $this->role == $role;
+    }
+    public function createdTransaction(): HasMany
+    {
+        return $this->hasMany(Transaction::class, "created_by_user_id");
+    }
+    public function approvedTransaction(): HasMany
+    {
+        return $this->hasMany(Transaction::class, "approved_by_user_id");
+    }
+    public function receivedRestockOrders(): HasMany
+    {
+        return $this->hasMany(RestockOrder::class, "supplier_id");
+    }
+    public function createdRestockOrders(): HasMany
+    {
+        return $this->hasMany(RestockOrder::class, "created_by_user_id");
+    }
+
 }
