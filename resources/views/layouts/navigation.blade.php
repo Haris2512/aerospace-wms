@@ -15,6 +15,20 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+
+                    <x-nav-link :href="route('products.index')" :active="request()->routeIs('products.*')">
+                        {{ __('Components') }}
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('transactions.index')" :active="request()->routeIs('transactions.*')">
+                        {{ __('Transactions') }}
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('restock.index')" :active="request()->routeIs('restock.*')">
+                        {{ __('Restock PO') }}
+                    </x-nav-link>
+
+                </div>
                 </div>
             </div>
 
@@ -70,6 +84,27 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+
+            {{-- 👇 KODE BARU MULAI DARI SINI 👇 --}}
+
+            <x-responsive-nav-link :href="route('categories.index')" :active="request()->routeIs('categories.*')">
+                {{ __('Categories') }}
+            </x-responsive-nav-link>
+
+            <x-responsive-nav-link :href="route('products.index')" :active="request()->routeIs('products.*')">
+                {{ __('Components') }}
+            </x-responsive-nav-link>
+
+            <x-responsive-nav-link :href="route('transactions.index')" :active="request()->routeIs('transactions.*')">
+                {{ __('Transactions') }}
+            </x-responsive-nav-link>
+
+            <x-responsive-nav-link :href="route('restock.index')" :active="request()->routeIs('restock.*')">
+                {{ __('Restock PO') }}
+            </x-responsive-nav-link>
+
+            {{-- 👆 KODE BARU SAMPAI SINI 👆 --}}
+        </div>
         </div>
 
         <!-- Responsive Settings Options -->
