@@ -1,111 +1,156 @@
-@extends('layouts.app')
-
-@section('content')
-<div class="container">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Detail Component') }}: {{ $product->name }}
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-bold text-xl text-gray-900 leading-tight">
+            {{ __('Component Details') }}
         </h2>
-        <a href="{{ route('products.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-300 transition ease-in-out duration-150">
-            &larr; Back to List
-        </a>
-    </div>
+    </x-slot>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        
-        {{-- BAGIAN KIRI: Detail Lengkap Produk (Lebar 2/3) --}}
-        <div class="md:col-span-2">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    <h3 class="text-lg font-bold text-gray-900 mb-4">Product Information</h3>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        
-                        {{-- Gambar --}}
-                        <div class="md:col-span-2 flex justify-center mb-4">
-                            @if($product->image_path)
-                                <img src="{{ Storage::url($product->image_path) }}" class="max-h-64 rounded-lg shadow-md object-cover">
+    <div class="py-12 bg-gray-50 min-h-screen">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+
+            {{-- Tombol Kembali --}}
+            <a href="{{ route('products.index') }}"
+                class="inline-flex items-center mb-6 text-sm font-medium text-gray-500 hover:text-gray-700 transition">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                Back to Inventory
+            </a>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+                {{-- KARTU UTAMA (Detail Produk) --}}
+                <div class="lg:col-span-2 bg-white shadow-xl sm:rounded-2xl overflow-hidden border border-gray-100">
+                    <div class="p-8">
+                        <div class="flex flex-col md:flex-row gap-8">
+
+                            {{-- Gambar Produk --}}
+                            <div class="flex-shrink-0">
+                                @if($product->image_path)
+                                    <img src="{{ Storage::url($product->image_path) }}"
+                                        class="w-48 h-48 rounded-xl object-cover border border-gray-200 shadow-sm">
+                                @else
+                                    <div
+                                        class="w-48 h-48 rounded-xl bg-gray-100 flex items-center justify-center text-gray-400 font-bold border border-gray-200">
+                                        No Image
+                                    </div>
+                                @endif
+                            </div>
+
+                            {{-- Info Teks --}}
+                            <div class="flex-1 space-y-4">
+                                <div>
+                                    <h3 class="text-2xl font-black text-gray-900">{{ $product->name }}</h3>
+                                    <p class="text-sm font-mono text-indigo-600 font-bold mt-1">{{ $product->sku }}</p>
+                                </div>
+
+                                <div class="flex flex-wrap gap-2">
+                                    <span
+                                        class="px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-bold border border-slate-200">
+                                        {{ $product->category->name ?? 'Uncategorized' }}
+                                    </span>
+                                    <span
+                                        class="px-3 py-1 rounded-full bg-gray-100 text-gray-600 text-xs font-bold border border-gray-200">
+                                        Loc: {{ $product->storage_location ?? 'Unknown' }}
+                                    </span>
+                                </div>
+
+                                <div
+                                    class="p-4 bg-gray-50 rounded-xl border border-gray-100 text-sm text-gray-600 leading-relaxed">
+                                    <span class="font-bold block text-gray-800 mb-1">Description:</span>
+                                    {{ $product->description ?? 'No description provided for this component.' }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-8 border-gray-100">
+
+                        {{-- Statistik Harga --}}
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="p-4 rounded-xl bg-blue-50 border border-blue-100">
+                                <p class="text-xs font-bold text-blue-600 uppercase tracking-wider">Purchase Price</p>
+                                <p class="text-lg font-black text-gray-900">Rp
+                                    {{ number_format($product->purchase_price, 0, ',', '.') }}</p>
+                            </div>
+                            <div class="p-4 rounded-xl bg-green-50 border border-green-100">
+                                <p class="text-xs font-bold text-green-600 uppercase tracking-wider">Selling Price</p>
+                                <p class="text-lg font-black text-gray-900">Rp
+                                    {{ number_format($product->sale_price, 0, ',', '.') }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- KARTU KANAN (Status Stok) --}}
+                <div class="lg:col-span-1 space-y-6">
+
+                    {{-- Kartu Stok --}}
+                    <div class="bg-white shadow-xl sm:rounded-2xl overflow-hidden border border-gray-100 p-6">
+                        <h4 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">Stock Status</h4>
+
+                        <div class="text-center py-4">
+                            <span class="text-5xl font-black text-gray-900">{{ $product->stock_current }}</span>
+                            <span class="text-gray-500 font-medium block mt-1">{{ $product->unit }} available</span>
+                        </div>
+
+                        {{-- Progress Bar untuk Stok Minimum --}}
+                        <div class="mt-4">
+                            <div class="flex justify-between text-xs font-bold mb-1">
+                                <span
+                                    class="{{ $product->stock_current <= $product->stock_minimum ? 'text-red-600' : 'text-gray-500' }}">
+                                    Minimum: {{ $product->stock_minimum }}
+                                </span>
+                                <span class="text-gray-400">Status</span>
+                            </div>
+
+                            @php
+                                $percentage = $product->stock_minimum > 0 ? ($product->stock_current / ($product->stock_minimum * 2)) * 100 : 100;
+                                $color = $product->stock_current <= $product->stock_minimum ? 'bg-red-500' : 'bg-green-500';
+                            @endphp
+
+                            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                <div class="{{ $color }} h-2.5 rounded-full transition-all duration-500"
+                                    style="width: {{ min($percentage, 100) }}%"></div>
+                            </div>
+
+                            @if($product->stock_current <= $product->stock_minimum)
+                                <div
+                                    class="mt-3 flex items-center justify-center text-red-600 bg-red-50 p-2 rounded-lg border border-red-100">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
+                                        </path>
+                                    </svg>
+                                    <span class="text-xs font-bold">Low Stock Warning!</span>
+                                </div>
                             @else
-                                <div class="h-48 w-full bg-gray-100 rounded-lg flex items-center justify-center text-gray-400">
-                                    No Image Available
+                                <div
+                                    class="mt-3 flex items-center justify-center text-green-700 bg-green-50 p-2 rounded-lg border border-green-100">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                    <span class="text-xs font-bold">Stock Level Healthy</span>
                                 </div>
                             @endif
                         </div>
+                    </div>
 
-                        {{-- Info Dasar --}}
-                        <div>
-                            <p class="text-sm text-gray-500">SKU</p>
-                            <p class="font-semibold">{{ $product->sku }}</p>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-500">Category</p>
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                                {{ $product->category->name ?? 'Uncategorized' }}
-                            </span>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-500">Purchase Price</p>
-                            <p class="font-medium">Rp {{ number_format($product->purchase_price, 0, ',', '.') }}</p>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-500">Selling Price</p>
-                            <p class="font-medium text-green-600">Rp {{ number_format($product->sale_price, 0, ',', '.') }}</p>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-500">Weight</p>
-                            <p class="font-medium">{{ $product->detail->weight ?? '-' }} kg</p>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-500">Size</p>
-                            <p class="font-medium">{{ $product->detail->size ?? '-' }}</p>
-                        </div>
-                        <div class="md:col-span-2">
-                            <p class="text-sm text-gray-500">Description</p>
-                            <p class="mt-1 text-gray-700 bg-gray-50 p-3 rounded">{{ $product->detail->description ?? 'No description provided.' }}</p>
+                    {{-- Tombol Aksi Cepat --}}
+                    <div class="bg-white shadow-xl sm:rounded-2xl overflow-hidden border border-gray-100 p-6">
+                        <h4 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4">Quick Actions</h4>
+                        <div class="flex flex-col gap-3">
+                            <a href="{{ route('products.edit', $product) }}"
+                                class="w-full text-center px-4 py-2 bg-indigo-600 text-white font-bold rounded-lg hover:bg-indigo-700 transition shadow-sm">
+                                Edit Component
+                            </a>
+                            {{-- (Nanti kita bisa tambah tombol 'Create Transaction' di sini) --}}
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
-
-        {{-- BAGIAN KANAN: Info Stok per Gudang (Lebar 1/3) --}}
-        <div class="md:col-span-1">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg h-full">
-                <div class="p-6 text-gray-900">
-                    <h3 class="text-lg font-bold text-gray-900 mb-4">Stock Availability</h3>
-                    
-                    <div class="mb-6 text-center p-4 bg-blue-50 rounded-lg border border-blue-100">
-                        <p class="text-sm text-blue-600 uppercase font-bold tracking-wider">Total Stock</p>
-                        <p class="text-3xl font-extrabold text-blue-800">{{ $product->stock_current }}</p>
-                        <p class="text-xs text-blue-500">{{ $product->unit }}</p>
-                    </div>
-
-                    <h4 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">By Warehouse</h4>
-                    
-                    <ul class="divide-y divide-gray-100">
-                        {{-- Loop data gudang dari relasi Many-to-Many --}}
-                        @forelse($product->warehouses as $warehouse)
-                            <li class="py-3 flex justify-between items-center">
-                                <div>
-                                    <p class="text-sm font-medium text-gray-900">{{ $warehouse->name }}</p>
-                                    <p class="text-xs text-gray-500 truncate w-32">{{ $warehouse->location }}</p>
-                                </div>
-                                
-                                {{-- Ambil 'quantity' dari TABEL PIVOT --}}
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                    {{ $warehouse->pivot->quantity }} {{ $product->unit }}
-                                </span>
-                            </li>
-                        @empty
-                            <li class="py-4 text-center text-gray-500 text-sm italic">
-                                No stock in any warehouse.
-                            </li>
-                        @endforelse
-                    </ul>
-                </div>
-            </div>
-        </div>
-
     </div>
-</div>
-@endsection
+</x-app-layout>
