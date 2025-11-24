@@ -96,7 +96,6 @@ class TransactionController extends Controller
                         ->with('info', 'Fitur update belum diimplementasikan.');
     }
 
-    
     /**
      * Menghapus data transaksi (Delete).
      */
