@@ -37,12 +37,18 @@ Route::middleware('auth')->group(function () {
         Route::resource('transactions', TransactionController::class);
     });
 
-    // --- 3. Tugas Khusus Manager (Hanya MANAGER) ---
-    Route::middleware('role:manager')->group(function () {
-        // Kelola Restock PO
+    // --- 3. RESTOCK MANAGEMENT (Manager & Supplier) ---
+    // Manager: Buat PO. Supplier: Lihat & Konfirmasi PO.
+    // (Admin boleh ditambahkan jika ingin Admin bisa lihat juga)
+    Route::middleware('role:manager,supplier,admin')->group(function () {
         Route::resource('restock', RestockOrderController::class);
 
-        // Approve Transaksi (Rute Custom)
+        Route::patch('/restock/{restockOrder}/confirm', [RestockOrderController::class, 'confirm'])->name("restock.confirm");
+    });
+
+    // --- 4. APPROVAL TRANSAKSI (Hanya Manager) ---
+    // Fitur ini sangat spesifik untuk Manager (Kepala Insinyur)
+    Route::middleware('role:manager')->group(function () {
         Route::post('/transactions/{transaction}/approve', [TransactionController::class, 'approve'])
             ->name('transactions.approve');
     });

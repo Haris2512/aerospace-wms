@@ -6,9 +6,9 @@ use App\Models\User;
 use App\Models\Product;
 use App\Models\RestockOrder;
 use App\Services\RestockOrderService;
-use App\Http\Requests\StoreRestockOrderRequest; 
+use App\Http\Requests\StoreRestockOrderRequest;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str; 
+use Illuminate\Support\Str;
 
 class RestockOrderController extends Controller
 {
@@ -75,11 +75,32 @@ class RestockOrderController extends Controller
     /**
      * Menampilkan detail satu PO.
      */
-    public function show(RestockOrder $restockOrder)
+    /**
+     * Menampilkan detail satu PO.
+     * PERBAIKAN: Ubah parameter jadi $restock agar cocok dengan route resource.
+     */
+    public function show(RestockOrder $restock) // <-- NAMA VARIABEL DIUBAH JADI $restock
     {
-        $restockOrder->load(['products', 'supplier', 'creator']);
+        // Load relasi pada variabel yang benar
+        $restock->load(['products', 'supplier', 'creator']);
 
-        return view('restock.show', compact('restockOrder'));
+        // Kita kirim ke view dengan nama 'restockOrder' (supaya tidak perlu ubah kode view)
+        return view('restock.show', ['restockOrder' => $restock]);
+    }/**
+     * Supplier mengonfirmasi pesanan.
+     */
+    public function confirm(RestockOrder $restockOrder)
+    {
+        // 1. Keamanan: Pastikan yang klik adalah Supplier yang benar
+        if (auth()->user()->id !== $restockOrder->supplier_id) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        // 2. Update status jadi 'confirmed'
+        $this->restockService->updateStatus($restockOrder, 'confirmed');
+
+        // 3. Kembali dengan pesan sukses
+        return back()->with('success', 'Purchase Order has been confirmed successfully.');
     }
 
 }

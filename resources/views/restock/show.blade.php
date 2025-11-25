@@ -4,6 +4,17 @@
         <div class="py-12">
             <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
 
+                {{-- Alert Sukses --}}
+                @if(session('success'))
+                    <div
+                        class="mb-6 p-4 bg-[#064E3B] border border-[#059669] text-green-100 rounded-lg flex items-center shadow-lg">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        <span class="font-bold">{{ session('success') }}</span>
+                    </div>
+                @endif
+
                 {{-- TOMBOL KEMBALI --}}
                 <a href="{{ route('restock.index') }}"
                     class="inline-flex items-center mb-6 text-sm font-medium text-gray-500 hover:text-gray-300 transition">
@@ -25,19 +36,29 @@
                         </p>
                     </div>
 
-                    {{-- STATUS BADGE --}}
-                    @php
-                        $statusColors = [
-                            'pending' => 'bg-yellow-900/30 border-yellow-700 text-yellow-400',
-                            'confirmed' => 'bg-blue-900/30 border-blue-700 text-blue-400',
-                            'shipped' => 'bg-purple-900/30 border-purple-700 text-purple-400',
-                            'received' => 'bg-green-900/30 border-green-700 text-green-400',
-                        ];
-                        $color = $statusColors[$restockOrder->status] ?? 'bg-gray-700 border-gray-600 text-gray-300';
-                    @endphp
-
-                    <div class="px-4 py-2 rounded-lg border {{ $color }} font-bold text-sm uppercase tracking-wider">
-                        {{ $restockOrder->status }}
+                    {{-- STATUS BADGE (Logika Diperbaiki) --}}
+                    <div>
+                        @if($restockOrder->status == 'pending')
+                            <span
+                                class="px-4 py-2 rounded-lg bg-yellow-900/30 border border-yellow-700 text-yellow-400 font-bold text-sm animate-pulse">
+                                ⚠ WAITING APPROVAL
+                            </span>
+                        @elseif($restockOrder->status == 'confirmed')
+                            <span
+                                class="px-4 py-2 rounded-lg bg-blue-900/30 border border-blue-700 text-blue-400 font-bold text-sm">
+                                ✓ CONFIRMED
+                            </span>
+                        @elseif($restockOrder->status == 'received')
+                            <span
+                                class="px-4 py-2 rounded-lg bg-green-900/30 border border-green-700 text-green-400 font-bold text-sm">
+                                ✓ RECEIVED
+                            </span>
+                        @else
+                            <span
+                                class="px-4 py-2 rounded-lg bg-gray-800 border border-gray-600 text-gray-300 font-bold text-sm uppercase">
+                                {{ $restockOrder->status }}
+                            </span>
+                        @endif
                     </div>
                 </div>
 
@@ -45,8 +66,6 @@
 
                     {{-- KOLOM KIRI: DETAIL ITEM --}}
                     <div class="lg:col-span-2 space-y-6">
-
-                        {{-- Tabel Barang --}}
                         <div class="bg-[#151B2D] shadow-2xl sm:rounded-2xl overflow-hidden border border-[#2D3748]">
                             <div
                                 class="px-6 py-4 border-b border-[#2D3748] bg-[#1A202C] flex justify-between items-center">
@@ -98,7 +117,7 @@
                             </div>
                         </div>
 
-                        {{-- Notes --}}
+                        {{-- NOTES --}}
                         <div class="bg-[#151B2D] shadow-xl sm:rounded-2xl border border-[#2D3748] p-6">
                             <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Notes from Manager
                             </h4>
@@ -110,11 +129,10 @@
                     {{-- KOLOM KANAN: INFO & AKSI --}}
                     <div class="space-y-6">
 
-                        {{-- Kartu Info --}}
+                        {{-- KARTU INFO --}}
                         <div class="bg-[#151B2D] shadow-xl sm:rounded-2xl border border-[#2D3748] p-6">
                             <h4 class="text-sm font-bold text-white mb-4 border-b border-[#2D3748] pb-2">Order Details
                             </h4>
-
                             <div class="space-y-4">
                                 <div>
                                     <span class="text-xs text-gray-500 uppercase block">Supplier</span>
@@ -134,27 +152,44 @@
                             </div>
                         </div>
 
-                        {{-- KARTU AKSI SUPPLIER --}}
-                        @if(Auth::user()->role === 'supplier' && $restockOrder->status === 'pending')
+                        {{-- KARTU AKSI SUPPLIER (Perbaikan Logika) --}}
+                        {{-- Cek 1: User harus Supplier --}}
+                        {{-- Cek 2: Status harus Pending --}}
+                        {{-- Cek 3: ID Supplier di PO harus sama dengan User yang login --}}
+                        @if(Auth::user()->role === 'supplier' && strtolower(trim($restockOrder->status)) == 'pending')
+
                             <div
                                 class="bg-[#151B2D] shadow-xl sm:rounded-2xl border border-blue-700/50 p-6 relative overflow-hidden">
                                 <div class="absolute top-0 right-0 w-16 h-16 bg-blue-500/10 rounded-bl-full -mr-4 -mt-4">
                                 </div>
 
                                 <h4 class="text-blue-400 font-bold text-lg mb-2">Supplier Action</h4>
-                                <p class="text-xs text-gray-400 mb-6">Please review the order items above. Click confirm to
-                                    accept this PO.</p>
+                                <p class="text-xs text-gray-400 mb-6">Please review the order. Click confirm to accept this
+                                    PO.</p>
 
-                                {{-- Tombol Confirm (Update Status ke 'confirmed') --}}
-                                {{-- NOTE: Kita perlu buat route khusus untuk update status ini nanti di Controller --}}
-                                <button type="button"
-                                    class="w-full flex justify-center items-center px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-lg transition transform hover:-translate-y-0.5">
-                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M5 13l4 4L19 7"></path>
-                                    </svg>
-                                    Confirm Order
-                                </button>
+                                {{-- Form Confirm (Sekarang sudah ada rutenya) --}}
+                                <form action="{{ route('restock.confirm', $restockOrder) }}" method="POST">
+                                    @csrf
+                                    @method('PATCH')
+                                    <button type="submit"
+                                        class="w-full flex justify-center items-center px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-lg transition transform hover:-translate-y-0.5"
+                                        onclick="return confirm('Confirm this order?');">
+                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M5 13l4 4L19 7"></path>
+                                        </svg>
+                                        Confirm Order
+                                    </button>
+                                </form>
+                            </div>
+
+                        @endif
+
+                        {{-- Jika Sudah Confirmed --}}
+                        @if($restockOrder->status === 'confirmed')
+                            <div class="bg-green-900/20 border border-green-800 p-4 rounded-xl text-center">
+                                <p class="text-green-400 font-bold text-sm">Order Confirmed</p>
+                                <p class="text-xs text-gray-500 mt-1">Waiting for shipment processing.</p>
                             </div>
                         @endif
 
