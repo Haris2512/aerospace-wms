@@ -12,7 +12,7 @@ class Transaction extends Model
     use HasFactory;
 
     protected $fillable = [
-        "transacton_number",
+        "transaction_number",
         "type",
         "transaction_date",
         "status",
