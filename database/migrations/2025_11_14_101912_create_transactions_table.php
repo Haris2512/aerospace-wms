@@ -25,7 +25,7 @@ return new class extends Migration
             $table->foreignId("supplier_id")->nullable()->constrained("users")->onDelete('set null');
 
             //kolom untuk barng kluar
-            $table->foreignId("customer_name")->nullable();
+            $table->string("customer_name")->nullable();
 
             //kolom untuk yang catat dan approve
             $table->foreignId("created_by_user_id")->nullable()->constrained("users")->onDelete('set null');

@@ -14,10 +14,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Dashboard 
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
-// --- GRUP UTAMA (Harus Login) ---
 Route::middleware('auth')->group(function () {
 
     // Profile (Semua User)
@@ -25,29 +23,25 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // --- 1. Master Data (Hanya ADMIN & MANAGER) ---
+    // --- (Hanya ADMIN & MANAGER) ---
     Route::middleware('role:admin,manager')->group(function () {
         Route::resource('categories', CategoryController::class);
         Route::resource('products', ProductController::class);
     });
 
-    // --- 2. Transaksi Harian (ADMIN, MANAGER, STAFF) ---
-    // Supplier TIDAK boleh masuk sini
+    // --- (ADMIN, MANAGER, STAFF) ---
     Route::middleware('role:admin,manager,staff')->group(function () {
         Route::resource('transactions', TransactionController::class);
     });
 
-    // --- 3. RESTOCK MANAGEMENT (Manager & Supplier) ---
-    // Manager: Buat PO. Supplier: Lihat & Konfirmasi PO.
-    // (Admin boleh ditambahkan jika ingin Admin bisa lihat juga)
+    // --- RESTOCK MANAGEMENT (Manager & Supplier) ---
     Route::middleware('role:manager,supplier,admin')->group(function () {
         Route::resource('restock', RestockOrderController::class);
 
         Route::patch('/restock/{restockOrder}/confirm', [RestockOrderController::class, 'confirm'])->name("restock.confirm");
     });
 
-    // --- 4. APPROVAL TRANSAKSI (Hanya Manager) ---
-    // Fitur ini sangat spesifik untuk Manager (Kepala Insinyur)
+    // --- (Hanya Manager) ---
     Route::middleware('role:manager')->group(function () {
         Route::post('/transactions/{transaction}/approve', [TransactionController::class, 'approve'])
             ->name('transactions.approve');

@@ -1,12 +1,6 @@
 <x-app-layout>
-    {{-- Kita override background default layout agar sesuai tema gelap --}}
     <div class="min-h-screen bg-[#0B1120] text-gray-300">
-
-        {{-- HEADER PAGE (Di luar card) --}}
         <x-slot name="header">
-            {{-- Hapus slot header bawaan jika ingin header menyatu dengan background gelap,
-            atau sesuaikan warnanya. Untuk desain ini, lebih baik header default di-hide
-            atau disesuaikan di layout utama. Saya asumsikan kita pakai struktur konten langsung. --}}
         </x-slot>
 
         <div class="py-12">

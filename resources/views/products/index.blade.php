@@ -280,8 +280,7 @@
 
                     {{-- Footer Pagination (Dark) --}}
                     <div class="px-6 py-4 bg-[#1A202C] border-t border-[#2D3748]">
-                        {{ $products->withQueryString()->links() }} {{-- PENTING: withQueryString agar filter tidak
-                        hilang --}}
+                        {{ $products->withQueryString()->links() }} 
                     </div>
 
                 </div>
