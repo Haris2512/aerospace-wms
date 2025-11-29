@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
-use App\Models\Category; 
+use App\Models\Category;
 use App\Services\ProductService;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule; 
+use Illuminate\Validation\Rule;
 
 class ProductController extends Controller
 {
@@ -17,28 +17,26 @@ class ProductController extends Controller
         $this->productService = $productService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        // Ambil data, 'with' untuk eager loading (lebih cepat)
-        $products = Product::with('category')->latest()->paginate(10);
-        return view('products.index', compact('products'));
+        $products = $this->productService->getProductsWithFilters($request);
+        $categories = Category::all();
+        return view('products.index', compact('products', 'categories'));
     }
 
     public function create()
     {
-        // Ambil semua kategori untuk mengisi dropdown di form
         $categories = Category::all();
         return view('products.create', compact('categories'));
     }
 
     public function store(Request $request)
     {
-        // 1. Validasi input (Tugas Controller) sesuai PDF [cite: 3353-3364]
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'sku' => 'required|string|max:255|unique:products', // SKU harus unik
+            'sku' => 'required|string|max:255|unique:products', 
             'description' => 'nullable|string',
-            'category_id' => 'nullable|exists:categories,id', // Pastikan Kategori ada
+            'category_id' => 'nullable|exists:categories,id', 
             'purchase_price' => 'required|numeric|min:0',
             'sale_price' => 'required|numeric|min:0',
             'stock_current' => 'required|integer|min:0',
@@ -48,12 +46,9 @@ class ProductController extends Controller
             'image_path' => 'nullable|image|mimes:jpg,png|max:2048',
         ]);
 
-        // 2. Serahkan "pekerjaan berat" ke Service
         $this->productService->store($validated);
-
-        // 3. Kembalikan response
         return redirect()->route('products.index')
-                        ->with('success', 'Produk (Komponen Dirgantara) berhasil ditambahkan.');
+            ->with('success', 'Produk (Komponen Dirgantara) berhasil ditambahkan.');
     }
 
     public function show(Product $product)
@@ -70,10 +65,8 @@ class ProductController extends Controller
 
     public function update(Request $request, Product $product)
     {
-        // 1. Validasi input
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            // 'unique' di sini mengabaikan ID $product ini sendiri
             'sku' => ['required', 'string', 'max:255', Rule::unique('products')->ignore($product->id)],
             'description' => 'nullable|string',
             'category_id' => 'nullable|exists:categories,id',
@@ -86,27 +79,21 @@ class ProductController extends Controller
             'image_path' => 'nullable|image|mimes:jpg,png|max:2048',
         ]);
 
-        // 2. Serahkan "pekerjaan berat" ke Service
         $this->productService->update($validated, $product);
-
-        // 3. Kembalikan response
         return redirect()->route('products.index')
-                        ->with('success', 'Produk berhasil diperbarui.');
+            ->with('success', 'Produk berhasil diperbarui.');
     }
 
     public function destroy(Product $product)
     {
         try {
-            // 1. Serahkan "pekerjaan berat" ke Service
             $this->productService->delete($product);
-            
             return redirect()->route('products.index')
-                            ->with('success', 'Produk berhasil dihapus.');
-        
+                ->with('success', 'Produk berhasil dihapus.');
+
         } catch (\Exception $e) {
-            // 2. Tangkap error dari Service (misal: "stok masih ada")
             return redirect()->route('products.index')
-                            ->with('error', $e->getMessage());
+                ->with('error', $e->getMessage());
         }
     }
 }

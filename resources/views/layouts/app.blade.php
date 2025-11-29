@@ -5,30 +5,32 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+        <title>Aerospace WMS</title>
 
-        <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-
-        <!-- Scripts -->
+        <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
+    
+    {{-- APLIKASI DARK MODE DITERAPKAN DI BODY --}}
+    <body class="font-sans antialiased bg-[#0B1120] text-gray-300">
+        
+        <div class="min-h-screen">
+            
+            {{-- 1. SIDEBAR VERTICAL (FIXED DI KIRI) --}}
             @include('layouts.navigation')
 
-            <!-- Page Heading -->
-            @isset($header)
-                <header class="bg-white dark:bg-gray-800 shadow">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            {{-- 2. PAGE HEADING (HEADER DI ATAS KONTEN) --}}
+            @if (isset($header))
+                <header class="bg-[#151B2D] shadow border-b border-[#2D3748] fixed top-0 left-64 right-0 z-10">
+                    <div class="max-w-full mx-auto py-4 px-4 sm:px-6 lg:px-8">
                         {{ $header }}
                     </div>
                 </header>
-            @endisset
+            @endif
 
-            <!-- Page Content -->
-            <main>
+            {{-- 3. PAGE CONTENT (BERGESER KE KANAN 64px) --}}
+            <main class="lg:ml-64 pt-16"> 
                 {{ $slot }}
             </main>
         </div>

@@ -1,9 +1,7 @@
 <x-app-layout>
-    {{-- Override background default layout --}}
     <div class="min-h-screen bg-[#0B1120] text-gray-300">
         
         <x-slot name="header">
-            {{-- Header slot dikosongkan atau disesuaikan jika perlu --}}
         </x-slot>
 
         <div class="py-12">
@@ -16,7 +14,7 @@
                     </h2>
                     <p class="text-gray-400 text-sm mt-2">Inventory > Edit > {{ $product->name }}</p>
                 </div>
-                
+
                 {{-- CARD UTAMA (GELAP) --}}
                 <div class="bg-[#151B2D] shadow-2xl sm:rounded-2xl overflow-hidden border border-[#2D3748]">
                     
@@ -40,7 +38,7 @@
                                         <h4 class="text-sm font-bold text-blue-400 uppercase tracking-wider">Identity & Classification</h4>
                                     </div>
                                     
-                                    {{-- SKU (Read-Only) --}}
+                                    {{-- SKU --}}
                                     <div>
                                         <x-input-label for="sku" :value="__('SKU')" class="font-bold !text-gray-300" />
                                         <input id="sku" class="block mt-2 w-full rounded-lg border-[#4A5568] bg-[#1A202C] text-gray-500 shadow-sm py-2.5 cursor-not-allowed" type="text" name="sku" value="{{ old('sku', $product->sku) }}" readonly />
@@ -78,7 +76,7 @@
                                 {{-- KANAN --}}
                                 <div class="space-y-6">
                                     <div class="border-b pb-2 border-[#2D3748] mb-4">
-                                        <h4 class="text-sm font-bold text-blue-400 uppercase tracking-wider">Inventory & Pricing Logic</h4>
+                                        <h4 class="text-sm font-bold text-blue-400 uppercase tracking-wider">Inventory & Pricing</h4>
                                     </div>
 
                                     <div class="grid grid-cols-2 gap-4">
@@ -103,7 +101,7 @@
                                         </div>
                                     </div>
 
-                                    {{-- Box Stok (Gelap) --}}
+                                    {{-- Box Stok --}}
                                     <div class="p-5 bg-[#1A202C] rounded-xl border border-[#2D3748]">
                                         <div class="grid grid-cols-2 gap-4">
                                             <div>
@@ -125,6 +123,7 @@
                                     <div>
                                         <x-input-label for="storage_location" :value="__('Location')" class="font-bold !text-gray-300" />
                                         <input id="storage_location" class="block mt-2 w-full rounded-lg border-[#4A5568] bg-[#2D3748] text-white focus:border-blue-500 focus:ring-blue-500 shadow-sm py-2.5" type="text" name="storage_location" value="{{ old('storage_location', $product->storage_location) }}" />
+                                        @error('storage_location') <p class="text-red-400 text-xs mt-1 font-medium">{{ $message }}</p> @enderror
                                     </div>
                                 </div>
                             </div>
@@ -134,12 +133,14 @@
                                 <div>
                                     <x-input-label for="description" :value="__('Technical Description')" class="font-bold !text-gray-300" />
                                     <textarea id="description" name="description" class="block mt-2 w-full rounded-lg border-[#4A5568] bg-[#2D3748] text-white focus:border-blue-500 focus:ring-blue-500 shadow-sm" rows="4">{{ old('description', $product->description) }}</textarea>
+                                    @error('description') <p class="text-red-400 text-xs mt-1 font-medium">{{ $message }}</p> @enderror
                                 </div>
 
+                                {{-- Image Upload Block --}}
                                 <div>
                                     <x-input-label for="image_path" :value="__('Component Image')" class="font-bold !text-gray-300" />
                                     
-                                    {{-- Preview Gambar Lama (Gelap) --}}
+                                    {{-- Preview Gambar Lama --}}
                                     @if($product->image_path)
                                         <div class="my-3 flex items-center p-3 bg-[#1A202C] rounded-lg border border-[#2D3748] w-fit">
                                             <img src="{{ Storage::url($product->image_path) }}" class="h-16 w-16 rounded-lg object-cover border border-[#4A5568]">
@@ -148,26 +149,25 @@
                                                 <p class="text-xs text-gray-500">Upload new to replace</p>
                                             </div>
                                         </div>
+
+                                        {{-- ⚠️ OPSI HAPUS GAMBAR LAMA --}}
+                                        <div class="mb-4">
+                                            <label class="flex items-center space-x-2 text-gray-400 cursor-pointer">
+                                                <input type="checkbox" name="delete_current_image" value="1" class="rounded border-[#4A5568] text-red-600 shadow-sm focus:ring-red-500 bg-[#0B1120]"/>
+                                                <span class="text-sm font-bold hover:text-red-400 transition">Delete Current Image Permanently</span>
+                                            </label>
+                                        </div>
                                     @endif
 
-                                    <input id="image_path" type="file" name="image_path" class="block w-full text-sm text-gray-400
-                                        file:mr-4 file:py-2.5 file:px-4
-                                        file:rounded-lg file:border-0
-                                        file:text-sm file:font-bold
-                                        file:bg-blue-600 file:text-white
-                                        hover:file:bg-blue-700 transition
-                                        border border-[#4A5568] rounded-lg cursor-pointer bg-[#2D3748] focus:outline-none" />
+                                    <input id="image_path" type="file" name="image_path" class="block w-full text-sm text-gray-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-700 transition border border-[#4A5568] rounded-lg cursor-pointer bg-[#2D3748] focus:outline-none" />
+                                    @error('image_path') <p class="text-red-400 text-xs mt-1 font-medium">{{ $message }}</p> @enderror
                                 </div>
                             </div>
 
-                            {{-- TOMBOL FOOTER (GELAP) --}}
+                            {{-- TOMBOL FOOTER --}}
                             <div class="flex items-center justify-end gap-4 mt-10 pt-6 border-t border-[#2D3748]">
-                                <a href="{{ route('products.index') }}" class="px-6 py-2.5 text-sm font-bold text-gray-300 bg-[#2D3748] border border-[#4A5568] rounded-lg hover:bg-[#374151] hover:text-white transition shadow-sm">
-                                    Cancel
-                                </a>
-                                <button type="submit" class="px-6 py-2.5 bg-amber-500 text-white font-bold text-sm rounded-lg shadow-lg shadow-amber-500/20 hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 focus:ring-offset-[#151B2D] transition-all transform hover:-translate-y-0.5">
-                                    Save Changes
-                                </button>
+                                <a href="{{ route('products.index') }}" class="px-6 py-2.5 text-sm font-bold text-gray-300 bg-[#2D3748] border border-[#4A5568] rounded-lg hover:bg-[#374151] hover:text-white transition shadow-sm">Cancel</a>
+                                <button type="submit" class="px-6 py-2.5 bg-amber-500 text-white font-bold text-sm rounded-lg shadow-lg shadow-amber-500/20 hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 transition-all transform hover:-translate-y-0.5">Update Changes</button>
                             </div>
 
                         </form>
