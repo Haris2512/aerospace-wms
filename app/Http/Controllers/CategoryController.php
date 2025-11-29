@@ -27,14 +27,14 @@ class CategoryController extends Controller
 
     public function store(Request $request)
     {
-        // 1. Validasi input (Tugas Controller)
+        // 1. Validasi input 
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:categories',
             'description' => 'nullable|string',
             'image_path' => 'nullable|image|mimes:jpg,png|max:2048',
         ]);
 
-        // 2. Serahkan logika bisnis (upload file, simpan) ke Service
+        // 2. Serahkan logika bisnis ke Service
         $this->categoryService->store($validated);
 
         // 3. Kembalikan response
@@ -61,7 +61,7 @@ class CategoryController extends Controller
             'image_path' => 'nullable|image|mimes:jpg,png|max:2048',
         ]);
 
-        // 2. Serahkan logika bisnis (update file, update data) ke Service
+        // 2. Serahkan logika bisnis ke Service
         $this->categoryService->update($validated, $category);
 
         // 3. Kembalikan response

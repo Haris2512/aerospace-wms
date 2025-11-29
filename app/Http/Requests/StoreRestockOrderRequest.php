@@ -8,7 +8,7 @@ class StoreRestockOrderRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true; // Nanti bisa dibatasi hanya untuk role 'manager'
+        return true; 
     }
 
     public function rules(): array

@@ -6,17 +6,10 @@ use App\Models\RestockOrder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
-/**
- * Service class untuk menangani logika bisnis Restock (Pemesanan ke Supplier).
- */
+
 class RestockOrderService
 {
-    /**
-     * Manager membuat pesanan restock baru ke Supplier.
-     *
-     * @param array $data Data yang sudah divalidasi
-     * @return RestockOrder Model RestockOrder yang baru dibuat
-     */
+
     public function createOrder(array $data): RestockOrder
     {
         return DB::transaction(function () use ($data) {
@@ -46,21 +39,11 @@ class RestockOrderService
         });
     }
 
-    /**
-     * Mengupdate status pesanan (misal: Supplier mengonfirmasi).
-     *
-     * @param RestockOrder $order
-     * @param string $status (confirmed, shipped, received, rejected)
-     */
     public function updateStatus(RestockOrder $order, string $status): void
     {
-        // Update status di database
         $order->update([
             'status' => $status
         ]);
 
-        // Catatan: Sesuai PDF, jika status 'received', 
-        // stok TIDAK otomatis bertambah di sini.
-        // Staff gudang harus membuat 'Incoming Transaction' terpisah untuk verifikasi fisik.
     }
 }

@@ -195,7 +195,7 @@
                         </div>
                     </div>
 
-                    {{-- KARTU KANAN (Status Stok & Aksi - GELAP) --}}
+                    {{-- KARTU KANAN (Status Stok & Aksi - GELAP) --}}  
                     <div class="lg:col-span-1 space-y-6">
 
                         {{-- Kartu Stok --}}

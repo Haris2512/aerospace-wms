@@ -8,12 +8,7 @@ use Illuminate\Support\Facades\Storage;
 
 class CategoryService
 {
-    /**
-     * Menangani logika penyimpanan kategori baru.
-     *
-     * @param array $validatedData Data dari $request->validate()
-     * @return Category Model Kategori yang baru dibuat
-     */
+
     public function store(array $validatedData): Category
     {
         if (isset($validatedData['image_path'])) {
@@ -23,13 +18,6 @@ class CategoryService
         return Category::create($validatedData);
     }
 
-    /**
-     * Menangani logika update kategori.
-     *
-     * @param array $validatedData Data dari $request->validate()
-     * @param Category $category Kategori yang akan diupdate
-     * @return Category Model Kategori yang sudah diupdate
-     */
     public function update(array $validatedData, Category $category): Category
     {
         if (isset($validatedData['image_path'])) {
@@ -44,13 +32,6 @@ class CategoryService
         return $category;
     }
 
-    /**
-     * Menangani logika hapus kategori.
-     *
-     * @param Category $category Kategori yang akan dihapus
-     * @return void
-     * @throws \Exception Jika kategori masih memiliki produk (sesuai PDF)
-     */
     public function delete(Category $category): void
     {
         if ($category->products()->count() > 0) { 

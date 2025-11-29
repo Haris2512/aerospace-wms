@@ -6,18 +6,11 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreTransactionRequest extends FormRequest
 {
-    /**
-     * Tentukan apakah user diizinkan membuat request ini.
-     * (Kita bisa tambahkan logika role 'staff' di sini nanti)
-     */
     public function authorize(): bool
     {
-        return true; // Izinkan dulu untuk sekarang
+        return true; 
     }
 
-    /**
-     * Dapatkan aturan validasi yang berlaku untuk request ini.
-     */
     public function rules(): array
     {
         // PINDAHKAN SEMUA ATURAN DARI CONTROLLER KE SINI

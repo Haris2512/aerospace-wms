@@ -8,12 +8,6 @@ use Illuminate\Http\Request;
 
 class ProductService
 {
-    /**
-     * Menangani logika penyimpanan produk baru.
-     *
-     * @param array $validatedData 
-     * @return Product 
-     */
     public function store(array $validatedData): Product
     {
         if (isset($validatedData['image_path'])) {
@@ -63,13 +57,7 @@ class ProductService
 
         return $query->paginate(10)->withQueryString(); 
     }
-    /**
-     * Menangani logika update produk.
-     *
-     * @param array $validatedData 
-     * @param Product $product 
-     * @return Product 
-     */
+
     public function update(array $validatedData, Product $product): Product
     {
         if (isset($validatedData['image_path'])) {
@@ -83,13 +71,6 @@ class ProductService
         return $product;
     }
 
-    /**
-     * Menangani logika hapus produk.
-     *
-     * @param Product $product 
-     * @return void
-     * @throws \Exception 
-     */
     public function delete(Product $product): void
     {
         if ($product->stock_current > 0) {

@@ -32,7 +32,7 @@
             </a>
         </div>
 
-        {{-- Kartu Login (Gelap) --}}
+        {{-- Kartu Login  --}}
         <div class="w-full sm:max-w-md mt-2 px-8 py-8 bg-[#151B2D] shadow-2xl border border-[#2D3748] sm:rounded-2xl">
             {{ $slot }}
         </div>

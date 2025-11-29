@@ -39,12 +39,15 @@ Route::middleware('auth')->group(function () {
         Route::resource('restock', RestockOrderController::class);
 
         Route::patch('/restock/{restockOrder}/confirm', [RestockOrderController::class, 'confirm'])->name("restock.confirm");
+        Route::patch('/restock/{restockOrder}/reject', [RestockOrderController::class, 'reject'])->name('restock.reject');
     });
 
     // --- (Hanya Manager) ---
     Route::middleware('role:manager')->group(function () {
         Route::post('/transactions/{transaction}/approve', [TransactionController::class, 'approve'])
             ->name('transactions.approve');
+        Route::patch('/restock/{restockOrder}/update-status', [RestockOrderController::class, 'updateStatus'])
+            ->name('restock.update-status');
     });
 
 });

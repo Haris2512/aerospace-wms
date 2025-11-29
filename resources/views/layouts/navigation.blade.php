@@ -52,7 +52,7 @@
         
     </div>
     
-    {{-- USER PROFILE / LOGOUT (Bottom Fixed) --}}
+    {{-- USER PROFILE / LOGOUT  --}}
     <div class="mt-auto p-4 border-t border-[#2D3748] bg-[#1A202C]">
         <div class="flex items-center justify-between">
             <div class="flex-shrink-0">
@@ -69,6 +69,5 @@
         </div>
     </div>
     
-    {{-- Removed Responsive Logic as it's not needed for a fixed sidebar --}}
 
 </nav>

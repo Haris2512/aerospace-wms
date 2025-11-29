@@ -11,7 +11,6 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
         <style>
-            /* Styling khusus untuk Background Galaksi */
             body, html {
                 height: 100%;
                 margin: 0;
@@ -19,116 +18,134 @@
             }
             
             .hero-section {
-                /* Ganti dengan path gambar yang benar */
                 background-image: url('{{ asset('images/galaxy.png') }}');
-                
-                /* Agar gambar full screen dan responsive */
                 height: 100vh;
                 background-position: center;
                 background-repeat: no-repeat;
                 background-size: cover;
                 position: relative;
+                display: flex;
+                flex-direction: column; /* Kunci agar footer bisa di bawah */
             }
 
-            /* Lapisan Gelap di atas gambar agar teks terbaca */
             .hero-overlay {
                 position: absolute;
                 top: 0;
                 left: 0;
                 width: 100%;
                 height: 100%;
-                background: rgba(0, 0, 0, 0.65); /* Tingkat kegelapan 65% */
-                background: linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.8) 100%);
+                background: rgba(0, 0, 0, 0.6);
+                background: radial-gradient(circle at center, rgba(11, 17, 32, 0.4) 0%, rgba(11, 17, 32, 0.9) 100%);
+                z-index: 1;
             }
 
-            .hero-content {
+            .content-layer {
                 position: relative;
-                z-index: 10; /* Di atas overlay */
+                z-index: 10;
+                width: 100%;
             }
         </style>
     </head>
     
-    <body class="antialiased text-gray-100">
+    <body class="antialiased text-gray-100 overflow-hidden">
         
-        <div class="hero-section flex flex-col justify-between">
+        <div class="hero-section">
             <div class="hero-overlay"></div>
 
-            {{-- HEADER: LOGO & LOGIN --}}
-            <header class="hero-content w-full p-6 flex justify-between items-center max-w-7xl mx-auto">
-                
-                {{-- Logo Kiri --}}
-                <div class="flex items-center gap-2">
-                    <div class="p-2 bg-blue-600 rounded-lg shadow-lg shadow-blue-500/50">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+            {{-- === HEADER (LOGO & MENU) === --}}
+            <header class="content-layer w-full py-6 px-8">
+                <div class="max-w-7xl mx-auto flex justify-between items-center">
+                    
+                    {{-- Logo (Kiri) --}}
+                    <div class="flex items-center gap-3 group cursor-default">
+                        <div class="p-2.5 bg-blue-600/20 border border-blue-500/30 rounded-xl shadow-[0_0_15px_rgba(37,99,235,0.3)] group-hover:shadow-[0_0_25px_rgba(37,99,235,0.5)] transition-all duration-300">
+                            <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-2xl font-black tracking-tighter text-white leading-none">AERO<span class="text-blue-500">WMS</span></span>
+                            <span class="text-[10px] uppercase tracking-[0.2em] text-blue-200/60 font-medium">System v1.0</span>
+                        </div>
                     </div>
-                    <span class="text-xl font-black tracking-tighter text-white">AERO<span class="text-blue-500">WMS</span></span>
-                </div>
 
-                {{-- Menu Kanan --}}
-                @if (Route::has('login'))
-                    <nav class="flex items-center gap-4">
-                        @auth
-                            <a href="{{ url('/dashboard') }}" class="px-5 py-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold rounded-full transition backdrop-blur-sm">
-                                Dashboard
-                            </a>
-                        @else
-                            <a href="{{ route('login') }}" class="text-gray-300 hover:text-white font-medium transition">
-                                Log in
-                            </a>
-                            @if (Route::has('register'))
-                                <a href="{{ route('register') }}" class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-full shadow-lg shadow-blue-600/30 transition transform hover:-translate-y-0.5">
-                                    Supplier Register
+                    {{-- Menu (Kanan) --}}
+                    @if (Route::has('login'))
+                        <nav class="flex items-center gap-6">
+                            @auth
+                                <a href="{{ url('/dashboard') }}" class="px-6 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold rounded-full transition backdrop-blur-md flex items-center gap-2 group">
+                                    Dashboard
+                                    <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
                                 </a>
-                            @endif
-                        @endauth
-                    </nav>
-                @endif
+                            @else
+                                <a href="{{ route('login') }}" class="text-gray-300 hover:text-white font-semibold text-sm transition-colors tracking-wide">
+                                    LOG IN
+                                </a>
+                                @if (Route::has('register'))
+                                    <a href="{{ route('register') }}" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm rounded-full shadow-lg shadow-blue-600/20 transition-all transform hover:-translate-y-0.5 hover:shadow-blue-600/40 border border-blue-500">
+                                        SUPPLIER REGISTER
+                                    </a>
+                                @endif
+                            @endauth
+                        </nav>
+                    @endif
+                </div>
             </header>
 
-            {{-- MAIN CONTENT: HERO TEXT --}}
-            <main class="hero-content flex-grow flex flex-col items-center justify-center text-center px-4">
+            {{-- === MAIN CONTENT (CENTER) === --}}
+            <main class="content-layer flex-grow flex flex-col items-center justify-center text-center px-4 relative">
                 
-                <div class="mb-6">
-                    <span class="px-4 py-1.5 rounded-full bg-blue-900/50 border border-blue-500/50 text-blue-300 text-xs font-bold uppercase tracking-widest backdrop-blur-md shadow-lg">
-                        Advanced Inventory System
+                {{-- Hiasan Latar Belakang Teks (Glow) --}}
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-[120px] pointer-events-none"></div>
+
+                <div class="mb-8 animate-fade-in-up">
+                    <span class="px-4 py-1.5 rounded-full bg-blue-950/50 border border-blue-500/30 text-blue-300 text-xs font-bold uppercase tracking-widest backdrop-blur-md shadow-[0_0_15px_rgba(37,99,235,0.15)]">
+                        🚀 Advanced Inventory Control
                     </span>
                 </div>
 
-                <h1 class="text-5xl md:text-7xl lg:text-8xl font-black text-white tracking-tight leading-tight mb-6 drop-shadow-2xl">
+                <h1 class="text-6xl md:text-8xl font-black text-white tracking-tight leading-tight mb-6 drop-shadow-2xl max-w-5xl">
                     BEYOND THE <br>
-                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400">STARS</span>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-cyan-300 to-blue-400 bg-[length:200%_auto] animate-shine">STARS</span>
                 </h1>
 
-                <p class="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-10 leading-relaxed font-light">
+                <p class="text-lg md:text-xl text-blue-100/80 max-w-2xl mx-auto mb-12 leading-relaxed font-light">
                     Manage high-precision aerospace components with absolute reliability. 
                     Real-time tracking, secure approvals, and mission-critical logistics.
                 </p>
 
-                <div class="flex flex-col sm:flex-row gap-4">
-                    <a href="{{ route('login') }}" class="px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold text-lg rounded-xl shadow-2xl shadow-blue-600/40 transition transform hover:scale-105">
+                <div class="flex flex-col sm:flex-row gap-5">
+                    <a href="{{ route('login') }}" class="px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold text-lg rounded-2xl shadow-xl shadow-blue-600/30 transition-all transform hover:scale-105 hover:shadow-blue-600/50 border-t border-blue-400">
                         Start Mission Control
                     </a>
-                    
-                    <a href="#features" class="px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold text-lg rounded-xl backdrop-blur-md transition">
-                        Explore Features
+                    <a href="#features" class="px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold text-lg rounded-2xl backdrop-blur-md transition-all hover:border-white/30">
+                        System Documentation
                     </a>
                 </div>
 
             </main>
 
-            {{-- FOOTER: STATS --}}
-            <footer class="hero-content pb-8 pt-4 border-t border-white/10 w-full bg-black/20 backdrop-blur-sm">
-                <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4 text-gray-400 text-sm">
-                    <p>&copy; 2025 Aerospace WMS. Security Clearance Required.</p>
+            {{-- === FOOTER (BOTTOM FIXED) === --}}
+            <footer class="content-layer w-full border-t border-white/5 bg-black/20 backdrop-blur-lg">
+                <div class="max-w-7xl mx-auto px-8 py-6 flex flex-col md:flex-row justify-between items-center gap-4">
                     
-                    <div class="flex gap-8">
+                    {{-- Copyright (Kiri) --}}
+                    <div class="text-gray-500 text-xs flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                        <p>&copy; 2025 Aerospace WMS. Security Clearance Required.</p>
+                    </div>
+                    
+                    {{-- Stats (Kanan) --}}
+                    <div class="flex gap-8 md:gap-12">
                         <div class="text-center">
-                            <span class="block text-xl font-bold text-white">99.9%</span>
-                            <span class="text-xs uppercase tracking-wider">Uptime</span>
+                            <span class="block text-lg font-bold text-white">99.9%</span>
+                            <span class="text-[10px] uppercase tracking-widest text-blue-400/80 font-semibold">Uptime</span>
                         </div>
                         <div class="text-center">
-                            <span class="block text-xl font-bold text-white">Zero</span>
-                            <span class="text-xs uppercase tracking-wider">Discrepancy</span>
+                            <span class="block text-lg font-bold text-white">Zero</span>
+                            <span class="text-[10px] uppercase tracking-widest text-blue-400/80 font-semibold">Discrepancy</span>
+                        </div>
+                        <div class="text-center hidden sm:block">
+                            <span class="block text-lg font-bold text-white">24/7</span>
+                            <span class="text-[10px] uppercase tracking-widest text-blue-400/80 font-semibold">Monitoring</span>
                         </div>
                     </div>
                 </div>
