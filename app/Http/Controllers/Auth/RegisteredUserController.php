@@ -39,18 +39,11 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-
-            // --- FIX PENTING: ROLE DAN STATUS FINAL ---
-            'role' => 'supplier', // Sesuai ketentuan tugas 
-            'status' => 'pending', // Wajib Pending
+            'role' => 'supplier',  
+            'status' => 'pending', 
         ]);
 
         event(new Registered($user));
-
-        // HAPUS: Auth::login($user);
-        // User yang statusnya pending tidak boleh langsung login.
-
-        // Redirect ke halaman login dengan pesan sukses.
         return redirect()->route('login')->with('status', 'Registration successful. Please wait for Admin approval.');
     }
 }
