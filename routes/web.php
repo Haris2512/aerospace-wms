@@ -9,6 +9,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\RestockOrderController;
+use App\Http\Controllers\UserController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -27,6 +28,7 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:admin,manager')->group(function () {
         Route::resource('categories', CategoryController::class);
         Route::resource('products', ProductController::class);
+        Route::get('/products/{product}/print-qr', [ProductController::class, 'printQr'])->name('products.print-qr');
     });
 
     // --- (ADMIN, MANAGER, STAFF) ---
@@ -40,6 +42,10 @@ Route::middleware('auth')->group(function () {
 
         Route::patch('/restock/{restockOrder}/confirm', [RestockOrderController::class, 'confirm'])->name("restock.confirm");
         Route::patch('/restock/{restockOrder}/reject', [RestockOrderController::class, 'reject'])->name('restock.reject');
+    });
+    // USER MANAGEMENT (KHUSUS ADMIN) ---
+    Route::middleware('role:admin')->group(function () {
+        Route::resource('users', UserController::class);
     });
 
     // --- (Hanya Manager) ---
