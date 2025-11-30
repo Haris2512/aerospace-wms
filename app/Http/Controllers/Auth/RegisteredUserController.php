@@ -31,21 +31,26 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            "role"=> "admin",
             'password' => Hash::make($request->password),
+
+            // --- FIX PENTING: ROLE DAN STATUS FINAL ---
+            'role' => 'supplier', // Sesuai ketentuan tugas 
+            'status' => 'pending', // Wajib Pending
         ]);
 
         event(new Registered($user));
 
-        Auth::login($user);
+        // HAPUS: Auth::login($user);
+        // User yang statusnya pending tidak boleh langsung login.
 
-        return redirect(route('dashboard', absolute: false));
+        // Redirect ke halaman login dengan pesan sukses.
+        return redirect()->route('login')->with('status', 'Registration successful. Please wait for Admin approval.');
     }
 }
