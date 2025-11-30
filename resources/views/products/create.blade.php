@@ -1,10 +1,48 @@
 <x-app-layout>
-    <div class="min-h-screen bg-[#0B1120] text-gray-300">
+    {{-- Override background default layout --}}
+    <div class="min-h-screen bg-[#0B1120] text-gray-300 font-sans">
+
         <x-slot name="header">
+            {{-- Header slot dikosongkan --}}
         </x-slot>
 
         <div class="py-12">
             <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+
+                {{-- === 1. AREA PESAN ERROR (PERBAIKAN UTAMA) === --}}
+                {{-- Menampilkan Error Validasi (Wajib Isi, Format Salah, dll) --}}
+                @if ($errors->any())
+                    <div
+                        class="mb-6 p-4 bg-red-900/30 border border-red-500/50 text-red-200 rounded-lg shadow-lg animate-pulse">
+                        <div class="flex items-center mb-2">
+                            <svg class="w-6 h-6 mr-2 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
+                                </path>
+                            </svg>
+                            <strong class="font-bold text-lg">Submission Failed!</strong>
+                        </div>
+                        <ul class="list-disc list-inside text-sm space-y-1 ml-2 text-red-300">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                {{-- Menampilkan Error Sistem (Database/Server Error) --}}
+                @if(session('error'))
+                    <div
+                        class="mb-6 p-4 bg-[#7F1D1D] border border-[#B91C1C] text-red-100 rounded-lg flex items-center shadow-lg">
+                        <svg class="w-5 h-5 mr-2 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span class="font-bold mr-1">System Error:</span> {{ session('error') }}
+                    </div>
+                @endif
+                {{-- === END AREA PESAN ERROR === --}}
+
 
                 {{-- JUDUL HALAMAN DI ATAS CARD --}}
                 <div class="mb-8">
@@ -44,6 +82,7 @@
                                             class="block mt-2 w-full rounded-lg border-[#4A5568] bg-[#2D3748] text-white placeholder-gray-500 focus:border-blue-500 focus:ring-blue-500 shadow-sm py-2.5"
                                             type="text" name="sku" value="{{ old('sku') }}" required
                                             placeholder="e.g. AV-2025-001" />
+                                        {{-- Pesan error spesifik per field tetap ada --}}
                                         @error('sku') <p class="text-red-400 text-xs mt-1 font-medium">{{ $message }}
                                         </p> @enderror
                                     </div>
@@ -161,7 +200,7 @@
                                                     d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
                                                 </path>
                                             </svg>
-                                            System will trigger an alert when stock hits minimum level.
+                                            Adjust limits for automated alerts.
                                         </p>
                                     </div>
 
@@ -189,7 +228,7 @@
                                 </div>
 
                                 <div>
-                                    <x-input-label for="image_path" :value="__('Component Image / Blueprint')"
+                                    <x-input-label for="image_path" :value="__('Component Image')"
                                         class="font-bold !text-gray-300" />
                                     <div class="mt-2 flex items-center">
                                         <input id="image_path" type="file" name="image_path"
@@ -201,8 +240,10 @@
                                             hover:file:bg-blue-700 transition
                                             border border-[#4A5568] rounded-lg cursor-pointer bg-[#2D3748] focus:outline-none" />
                                     </div>
-                                    <p class="text-xs text-gray-500 mt-2">Recommended: JPG, PNG (Max 2MB). Clear photo
-                                        of the part.</p>
+                                    @error('image_path') <p class="text-red-400 text-xs mt-1 font-medium">{{ $message }}
+                                    </p> @enderror
+                                    <p class="text-xs text-gray-500 mt-2">Required: JPG, PNG (Max 2MB). Must upload a
+                                        clear photo.</p>
                                 </div>
                             </div>
 

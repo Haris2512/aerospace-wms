@@ -16,21 +16,29 @@ class DashboardController extends Controller
         $user = Auth::user();
         $data = [];
 
-        // --- LOGIKA KHUSUS ADMIN & MANAGER ---
+        // --- ADMIN & MANAGER ---
         if ($user->role === 'admin' || $user->role === 'manager') {
             $data['total_products'] = Product::count();
             $data['total_value'] = Product::sum(DB::raw('purchase_price * stock_current'));
             $data['low_stock_count'] = Product::whereColumn('stock_current', '<=', 'stock_minimum')->count();
+
+            // Total Transaksi Bulan Ini
+            $data['transactions_month'] = Transaction::whereMonth('transaction_date', now()->month)
+                ->whereYear('transaction_date', now()->year)
+                ->count();
+
             $data['pending_transactions'] = Transaction::where('status', 'pending')->count();
 
-            // Ambil 5 produk dengan stok menipis untuk ditampilkan di dashboard
+            // Confirmed/Shipped
+            $data['active_restocks'] = RestockOrder::whereIn('status', ['confirmed', 'shipped'])->count();
+
             $data['low_stock_items'] = Product::whereColumn('stock_current', '<=', 'stock_minimum')
                 ->orderBy('stock_current', 'asc')
                 ->take(5)
                 ->get();
         }
 
-        // --- LOGIKA KHUSUS STAFF ---
+        // --- STAFF ---
         if ($user->role === 'staff') {
             $data['transactions_today'] = Transaction::where('created_by_user_id', $user->id)
                 ->whereDate('created_at', today())
@@ -44,7 +52,7 @@ class DashboardController extends Controller
                 ->get();
         }
 
-        // --- LOGIKA KHUSUS SUPPLIER ---
+        // --- SUPPLIER ---
         if ($user->role === 'supplier') {
             $data['pending_po'] = RestockOrder::where('supplier_id', $user->id)
                 ->where('status', 'pending')
@@ -55,6 +63,13 @@ class DashboardController extends Controller
             $data['incoming_orders'] = RestockOrder::where('supplier_id', $user->id)
                 ->where('status', 'pending')
                 ->with('products')
+                ->latest()
+                ->take(5)
+                ->get();
+
+            // History
+            $data['delivery_history'] = RestockOrder::where('supplier_id', $user->id)
+                ->where('status', 'received')
                 ->latest()
                 ->take(5)
                 ->get();

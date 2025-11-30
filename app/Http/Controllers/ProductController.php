@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Services\ProductService;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use App\Http\Requests\StoreProductRequest;
 
 class ProductController extends Controller
 {
@@ -30,22 +31,9 @@ class ProductController extends Controller
         return view('products.create', compact('categories'));
     }
 
-    public function store(Request $request)
+    public function store(StoreProductRequest $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'sku' => 'required|string|max:255|unique:products', 
-            'description' => 'nullable|string',
-            'category_id' => 'nullable|exists:categories,id', 
-            'purchase_price' => 'required|numeric|min:0',
-            'sale_price' => 'required|numeric|min:0',
-            'stock_current' => 'required|integer|min:0',
-            'stock_minimum' => 'required|integer|min:0',
-            'unit' => 'required|string|max:50',
-            'storage_location' => 'nullable|string|max:255',
-            'image_path' => 'nullable|image|mimes:jpg,png|max:2048',
-        ]);
-
+        $validated = $request->validated();
         $this->productService->store($validated);
         return redirect()->route('products.index')
             ->with('success', 'Produk (Komponen Dirgantara) berhasil ditambahkan.');
@@ -53,10 +41,15 @@ class ProductController extends Controller
 
     public function show(Product $product)
     {
-        $product->load('category');
+        $product->load([
+            'category',
+            'transactions' => function ($query) {
+                $query->latest('transaction_date')->take(5);
+            }
+        ]);
+
         return view('products.show', compact('product'));
     }
-
     public function edit(Product $product)
     {
         $categories = Category::all();
@@ -96,4 +89,8 @@ class ProductController extends Controller
                 ->with('error', $e->getMessage());
         }
     }
+    public function printQr(Product $product)
+    {
+        return view('products.print-qr', compact('product'));
+    }       
 }
