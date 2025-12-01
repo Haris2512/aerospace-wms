@@ -51,7 +51,7 @@
         @endif
 
         {{-- RESTOCK (Manager & Supplier) --}}
-        @if(in_array(Auth::user()->role, ['manager', 'supplier']))
+        @if(in_array(Auth::user()->role, ['manager', 'supplier', 'admin']))
             <x-nav-link :href="route('restock.index')" :active="request()->routeIs('restock.*')" class="text-sm font-medium hover:bg-[#1A202C] px-3 py-2 rounded-lg transition-colors duration-200 block">
                 <svg class="w-5 h-5 mr-3 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8-4v4M5 9h14l-1 12H6L5 9z"></path></svg>
                 {{ __('Restock PO') }}

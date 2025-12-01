@@ -19,7 +19,7 @@ class StoreTransactionRequest extends FormRequest
             'transaction_date' => 'required|date',
             'supplier_id' => 'nullable|required_if:type,incoming|exists:users,id',
             'customer_name' => 'nullable|required_if:type,outgoing|string|max:255',
-            'notes' => 'nullable|string',
+            'notes' => 'required|string',
             'products' => 'required|array|min:1',
             'products.*.id' => 'required|exists:products,id',
             'products.*.quantity' => 'required|integer|min:1',

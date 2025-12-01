@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Models\RestockOrder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-
+use App\Models\User;
 
 class RestockOrderService
 {
@@ -37,6 +37,16 @@ class RestockOrderService
 
             return $order;
         });
+    }
+    public function getOrdersByUser(User $user)
+    {
+        $query = RestockOrder::with(['supplier', 'creator']);
+
+        if ($user->role === 'supplier') {
+            $query->where('supplier_id', $user->id);
+        }
+        
+        return $query->latest()->paginate(10);
     }
 
     public function updateStatus(RestockOrder $order, string $status): void

@@ -9,6 +9,7 @@ use App\Services\RestockOrderService;
 use App\Http\Requests\StoreRestockOrderRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 
 class RestockOrderController extends Controller
 {
@@ -19,11 +20,8 @@ class RestockOrderController extends Controller
         $this->restockService = $restockService;
     }
     public function index()
-    {
-        $orders = RestockOrder::with(['supplier', 'creator'])
-            ->latest()
-            ->paginate(10);
-
+    {$orders = $this->restockService->getOrdersByUser(Auth::user());
+        
         return view('restock.index', compact('orders'));
     }
 

@@ -47,7 +47,6 @@ class TransactionService
             return $transaction;
         });
     }
-
     public function approveTransaction(Transaction $transaction): void
     {
         if ($transaction->status !== 'pending') {

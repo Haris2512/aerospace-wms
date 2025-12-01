@@ -6,8 +6,8 @@ use App\Models\Product;
 use App\Models\Category;
 use App\Services\ProductService;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use App\Http\Requests\StoreProductRequest;
+use App\Http\Requests\UpdateProductRequest; 
 
 class ProductController extends Controller
 {
@@ -33,8 +33,8 @@ class ProductController extends Controller
 
     public function store(StoreProductRequest $request)
     {
-        $validated = $request->validated();
-        $this->productService->store($validated);
+        $this->productService->store($request->validated());
+
         return redirect()->route('products.index')
             ->with('success', 'Produk (Komponen Dirgantara) berhasil ditambahkan.');
     }
@@ -50,29 +50,17 @@ class ProductController extends Controller
 
         return view('products.show', compact('product'));
     }
+
     public function edit(Product $product)
     {
         $categories = Category::all();
         return view('products.edit', compact('product', 'categories'));
     }
 
-    public function update(Request $request, Product $product)
+    public function update(UpdateProductRequest $request, Product $product)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'sku' => ['required', 'string', 'max:255', Rule::unique('products')->ignore($product->id)],
-            'description' => 'nullable|string',
-            'category_id' => 'nullable|exists:categories,id',
-            'purchase_price' => 'required|numeric|min:0',
-            'sale_price' => 'required|numeric|min:0',
-            'stock_current' => 'required|integer|min:0',
-            'stock_minimum' => 'required|integer|min:0',
-            'unit' => 'required|string|max:50',
-            'storage_location' => 'nullable|string|max:255',
-            'image_path' => 'nullable|image|mimes:jpg,png|max:2048',
-        ]);
+        $this->productService->update($request->validated(), $product);
 
-        $this->productService->update($validated, $product);
         return redirect()->route('products.index')
             ->with('success', 'Produk berhasil diperbarui.');
     }
@@ -89,6 +77,7 @@ class ProductController extends Controller
                 ->with('error', $e->getMessage());
         }
     }
+
     public function printQr(Product $product)
     {
         return view('products.print-qr', compact('product'));
