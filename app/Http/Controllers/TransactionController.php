@@ -81,8 +81,6 @@ class TransactionController extends Controller
             return back()->with('error', 'Gagal update transaksi: ' . $e->getMessage())->withInput();
         }
     }
-
-
     public function destroy(Transaction $transaction)
     {
         if ($transaction->status !== 'pending') {
@@ -96,7 +94,6 @@ class TransactionController extends Controller
         return redirect()->route('transactions.index')
             ->with('success', 'Transaksi (Pending) berhasil dihapus.');
     }
-
     public function approve(Transaction $transaction)
     {
         try {

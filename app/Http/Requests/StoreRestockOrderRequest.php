@@ -16,8 +16,8 @@ class StoreRestockOrderRequest extends FormRequest
         return [
             'supplier_id' => 'required|exists:users,id', // Harus user yang valid
             'order_date' => 'required|date',
-            'expected_delivery_date' => 'nullable|date|after_or_equal:order_date',
-            'notes' => 'nullable|string',
+            'expected_delivery_date' => 'required|date|after_or_equal:order_date',
+            'notes' => 'required|string',
             
             // Validasi Daftar Produk yang Dipesan
             'products' => 'required|array|min:1',

@@ -30,8 +30,8 @@ class CategoryController extends Controller
         // 1. Validasi input 
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:categories',
-            'description' => 'nullable|string',
-            'image_path' => 'nullable|image|mimes:jpg,png|max:2048',
+            'description' => 'required|string',
+            'image_path' => 'required|image|mimes:jpg,png|max:2048',
         ]);
 
         // 2. Serahkan logika bisnis ke Service
@@ -57,8 +57,8 @@ class CategoryController extends Controller
         // 1. Validasi input
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
-            'description' => 'nullable|string',
-            'image_path' => 'nullable|image|mimes:jpg,png|max:2048',
+            'description' => 'required|string',
+            'image_path' => 'required|image|mimes:jpg,png|max:2048',
         ]);
 
         // 2. Serahkan logika bisnis ke Service
